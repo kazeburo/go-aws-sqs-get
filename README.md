@@ -15,4 +15,7 @@ Help Options:
   -h, --help    Show this help message
 ```
 
-
+```
+$ aws-sqs-get -r ap-northeast-1 -n awesome-queue -m NumberOfMessagesReceived
+0.98765
+```
