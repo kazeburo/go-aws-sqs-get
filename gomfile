@@ -1,0 +1,4 @@
+gom "github.com/jessevdk/go-flags"
+gom "github.com/aws/aws-sdk-go/aws"
+gom "github.com/aws/aws-sdk-go/aws/session"
+gom "github.com/aws/aws-sdk-go/service/cloudwatch"
