@@ -1,19 +1,20 @@
 package main
 
 import (
-	"os"
 	"fmt"
+	"os"
 	"time"
-	"github.com/jessevdk/go-flags"
+
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/aws/session"
 	"github.com/aws/aws-sdk-go/service/cloudwatch"
+	"github.com/jessevdk/go-flags"
 )
 
 type options struct {
-	Region      string   `short:"r" long:"region" arg:"String" required:"true" description:"target region"`
-	Name        string   `short:"n" long:"name" arg:"String" required:"true" description:"target queue name"`
-	Metric      string   `short:"m" long:"metric" arg:"String" requried:"true" description:"target metrics label"`
+	Region string `short:"r" long:"region" arg:"String" required:"true" description:"target region"`
+	Name   string `short:"n" long:"name" arg:"String" required:"true" description:"target queue name"`
+	Metric string `short:"m" long:"metric" arg:"String" requried:"true" description:"target metrics label"`
 }
 
 func main() {
@@ -33,7 +34,7 @@ func _main() (st int) {
 	var home = os.Getenv("HOME")
 	_, err = os.Stat("/root/.aws/credentials")
 	if home == "" && err == nil {
-		os.Setenv("HOME","/root")
+		os.Setenv("HOME", "/root")
 	}
 
 	maxRetry := 3
@@ -51,22 +52,22 @@ func _main() (st int) {
 			aws.String("Average"),
 		},
 		Dimensions: []*cloudwatch.Dimension{
-		{ // Required
-			Name:  aws.String("QueueName"),  // Required
-			Value: aws.String(opts.Name), // Required
+			{ // Required
+				Name:  aws.String("QueueName"), // Required
+				Value: aws.String(opts.Name),   // Required
+			},
+			// More values...
 		},
-		// More values...
-	},
 	}
 	resp, err := svc.GetMetricStatistics(params)
 	if err != nil {
-		fmt.Fprintf(os.Stderr, "svc.GetMetricStatistics failed: %s\n",err)
+		fmt.Fprintf(os.Stderr, "svc.GetMetricStatistics failed: %s\n", err)
 		return
 	}
 
 	datapoints := resp.Datapoints
 	if len(datapoints) == 0 {
-		fmt.Fprintf(os.Stderr, "svc.GetMetricStatistics failed: %s\n","fetched no datapoints")
+		fmt.Fprintf(os.Stderr, "svc.GetMetricStatistics failed: %s\n", "fetched no datapoints")
 		return
 	}
 	// fmt.Println(resp)
@@ -80,8 +81,6 @@ func _main() (st int) {
 		latestVal = *dp.Average
 	}
 	st = 0
-	fmt.Fprintf(os.Stdout, "%f\n", latestVal);
+	fmt.Fprintf(os.Stdout, "%f\n", latestVal)
 	return
 }
-
-

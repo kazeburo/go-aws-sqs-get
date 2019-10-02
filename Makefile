@@ -1,27 +1,22 @@
-VERSION=0.0.1
+VERSION=0.0.2
+LDFLAGS=-ldflags "-X main.Version=${VERSION}"
+GO111MODULE=on
 
 all: aws-sqs-get
 
 .PHONY: aws-sqs-get
 
-gom:
-	go get -u github.com/mattn/gom
-
-bundle:
-	gom install
-
 aws-sqs-get: aws-sqs-get.go
-	gom build -o aws-sqs-get
+	go build $(LDFLAGS) -o aws-sqs-get
 
 linux: aws-sqs-get.go
-	GOOS=linux GOARCH=amd64 gom build -o aws-sqs-get
-
-fmt:
-	go fmt ./...
-
-dist:
-	git archive --format tgz HEAD -o aws-sqs-get-$(VERSION).tar.gz --prefix aws-sqs-get-$(VERSION)/
+	GOOS=linux GOARCH=amd64 go build $(LDFLAGS) -o aws-sqs-get
 
 clean:
-	rm -rf aws-sqs-get aws-sqs-get-*.tar.gz
+	rm -rf aws-sqs-get
 
+tag:
+	git tag v${VERSION}
+	git push origin v${VERSION}
+	git push origin master
+	goreleaser --rm-dist
